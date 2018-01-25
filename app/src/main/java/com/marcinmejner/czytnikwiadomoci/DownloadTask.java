@@ -1,5 +1,6 @@
 package com.marcinmejner.czytnikwiadomoci;
 
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -63,14 +64,37 @@ public class DownloadTask extends AsyncTask<String, Void, String> {
 
                 StringBuilder result2 = new StringBuilder();
                 String line2;
-                while (null != (line2 = reader.readLine())){
-                    result2.append(line2);
-                    Log.i("dzejson", line2.toString());
+                while (null != (line2 = reader.readLine())) {
+                    result2.append(line2 + "\n");
+
                 }
+                Log.i("dzejson", result2.toString());
+
+                JSONObject jsonObject = new JSONObject(result2.toString());
+
+                if (!jsonObject.isNull("title") && !jsonObject.isNull("url")) {
+                    String articleTitle = jsonObject.getString("title");
+                    String articleURL = jsonObject.getString("url");
+                    Log.i("informacje",  articleURL);
+
+                    url = new URL(articleURL);
+
+                    connection = (HttpURLConnection) url.openConnection();
+
+                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+                    StringBuilder result3 = new StringBuilder();
+
+                    while (null != (line = reader.readLine())){
+                        result3.append(line + "\n");
 
 
+                    }
+                    Log.i("strona", result3.toString());
 
-
+                    String sql = "INSERT INTO articles (articleID, title, content) VALUES (? , ? , ?)";
+                    SQLiteStatement statement = arti
+                }
 
 
             }
