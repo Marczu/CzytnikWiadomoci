@@ -1,5 +1,6 @@
 package com.marcinmejner.czytnikwiadomoci;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
@@ -19,6 +20,8 @@ import java.net.URL;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -40,6 +43,16 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, titles);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Intent intent = new Intent(getApplicationContext(), ArticleActivity.class);
+                intent.putExtra("content", content.get(i));
+                startActivity(intent);
+
+            }
+        });
 
         articlesDB = this.openOrCreateDatabase("Articles", MODE_PRIVATE, null);
         articlesDB.execSQL("CREATE TABLE IF NOT EXISTS articles (id INTEGER PRIMARY KEY AUTOINCREMENT, articleId INTEGER, title VARCHAR, content VARCHAR)");
@@ -54,13 +67,13 @@ public class MainActivity extends AppCompatActivity {
         String result;
 
 
-        try {
-            result = task.execute("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty").get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            result = task.execute("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty").get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
